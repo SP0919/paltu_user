@@ -6,7 +6,7 @@ exports.findAll = (req, res) => {
     .then((category) => {
       res.send(category);
     })
-    .catch((err) => {
+    .catch((err) => {  
       res
         .status(500)
         .send({ message: err.message || "Something went wrong while getting list of category." });
