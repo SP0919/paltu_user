@@ -1,4 +1,5 @@
 "use strict";
+const { required } = require("@hapi/joi/lib/base.js");
 const bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
 const User = require("../models/user.model.js");
@@ -184,3 +185,26 @@ exports.delete = (req, res) => {
       return res.status(500).send({ message: "Could not delete user with id " + req.params.id });
     });
 };
+// change password a pasword with the user id 
+    exports.changePassword = (req, res) => {
+      
+      var  userid= "63032b592bfc3d2495437566";
+      User.findById(userid)
+      .then((userid) => {
+        if(req.body.confirmpassword == req.body.newpassword){
+          return res.status(400).send({message: "password match"});
+        }
+        else{
+            return res.status(404).send({message: "password not match" +  "63032b592bfc3d2495437566"});
+          }
+          
+        })
+        if(!req.body.confirmpassword ){
+          return res.status(400).send({message: "fill required field"});
+        }
+         
+  
+      };
+      
+      
+        
