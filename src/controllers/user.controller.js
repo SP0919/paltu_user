@@ -105,7 +105,10 @@ exports.signIn = function (req, res) {
         return errorRespond(data, req, res);
       }
 
-      const token = jwt.sign({ email: user.email, fullName: user, _id: user._id }, "RESTFULAPIs");
+      const token = jwt.sign(
+        { email: user.email, fullName: user, _id: user._id },
+        process.env.TOKEN_SECRET
+      );
       const datas = { data: [token, user], message: "Users Logined  Successfully." };
       return successRepond(datas, req, res);
     })
@@ -121,6 +124,7 @@ exports.signIn = function (req, res) {
         status: "404",
         message: err.message || "Something went wrong while creating new user.",
       };
+      return errorRespond(data, req, res);
     });
 };
 // Find a single User with a id
@@ -128,22 +132,39 @@ exports.findOne = (req, res) => {
   User.findById(req.params.id)
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: "User not found with id " + req.params.id });
+        const data = {
+          status: "500",
+          message: "User not found with id " + req.params.id,
+        };
+        return errorRespond(data, req, res);
       }
-      res.send(user);
+      const datas = { data: user, message: "Users Data  Successfully." };
+      return successRepond(datas, req, res);
     })
     .catch((err) => {
       if (err.kind === "ObjectId") {
-        return res.status(404).send({ message: "User not found with id " + req.params.id });
+        const data = {
+          status: "500",
+          message: "User not found with id " + req.params.id,
+        };
+        return errorRespond(data, req, res);
       }
-      return res.status(500).send({ message: "Error getting user with id " + req.params.id });
+      const data = {
+        status: "500",
+        message: "Error getting user with id " + req.params.id,
+      };
+      return errorRespond(data, req, res);
     });
 };
 // Update a User identified by the id in the request
 exports.update = (req, res) => {
   // Validate Request
   if (!req.body) {
-    return res.status(400).send({ message: "Please fill all required field" });
+    const data = {
+      status: "400",
+      message: "Please fill all required field",
+    };
+    return errorRespond(data, req, res);
   }
   // Find user and update it with the request body
   User.findByIdAndUpdate(
@@ -158,15 +179,28 @@ exports.update = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: "user not found with id " + req.params.id });
+        const data = {
+          status: "404",
+          message: "user not found with id " + req.params.id,
+        };
+        return errorRespond(data, req, res);
       }
-      res.send(user);
+      const data = { data: user, message: "user deleted successfully!" };
+      return successRepond(data, req, res);
     })
     .catch((err) => {
       if (err.kind === "ObjectId") {
-        return res.status(404).send({ message: "user not found with id " + req.params.id });
+        const data = {
+          status: "404",
+          message: "user not found with id " + req.params.id,
+        };
+        return errorRespond(data, req, res);
       }
-      return res.status(500).send({ message: "Error updating user with id " + req.params.id });
+      const data = {
+        status: "500",
+        message: "Error updating user with id " + req.params.id,
+      };
+      return errorRespond(data, req, res);
     });
 };
 // Delete a User with the specified id in the request
@@ -174,15 +208,28 @@ exports.delete = (req, res) => {
   User.findByIdAndRemove(req.params.id)
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: "user not found with id " + req.params.id });
+        const data = {
+          status: "404",
+          message: "user not found with id " + req.params.id,
+        };
+        return errorRespond(data, req, res);
       }
-      res.send({ message: "user deleted successfully!" });
+      const data = { data: "", message: "user deleted successfully!" };
+      return successRepond(data, req, res);
     })
     .catch((err) => {
       if (err.kind === "ObjectId" || err.name === "NotFound") {
-        return res.status(404).send({ message: "user not found with id " + req.params.id });
+        const data = {
+          status: "404",
+          message: "user not found with id " + req.params.id,
+        };
+        return errorRespond(data, req, res);
       }
-      return res.status(500).send({ message: "Could not delete user with id " + req.params.id });
+      const data = {
+        status: "500",
+        message: "Could not delete user with id " + req.params.id,
+      };
+      return errorRespond(data, req, res);
     });
 };
 // change password a pasword with the user id 

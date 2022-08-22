@@ -19,4 +19,5 @@ router.delete("/:id", userController.delete);
 router.delete("/:id", userController.delete);
 router.post("/change-password",upload.none(), userController.changePassword);
 
+// router.delete("/:id", userController.delete);
 module.exports = router;

@@ -7,6 +7,8 @@ const db = require("../../config/db.config");
 var user = require("./user.routes");
 var category = require("./category.routes");
 var coupon = require("./coupon.routes");
+var serviceProvider = require("./serviceProvider.route");
+var serviceTypes = require("./serviceTypes.route");
 
 const defaultRoutes = [
   {
@@ -20,7 +22,16 @@ const defaultRoutes = [
   {
     path: "/coupon",
     route: coupon,
-  }
+  },
+
+  {
+    path: "/service-type",
+    route: serviceTypes,
+  },
+  {
+    path: "/service-provider",
+    route: serviceProvider,
+  },
 ];
 
 defaultRoutes.forEach((route) => {
