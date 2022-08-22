@@ -1,40 +1,125 @@
+"use strict";
+const bcrypt = require("bcryptjs");
+var jwt = require("jsonwebtoken");
 const User = require("../models/user.model.js");
+const { errorRespond, successRepond } = require("../utils/responseHandler.util");
+
 // Retrieve and return all users from the database.
 exports.findAll = (req, res) => {
   User.find()
+    .sort({ createdAt: -1 })
     .then((users) => {
-      res.send(users);
+      const data = { data: users, message: "Users fetched  Successfully." };
+      return successRepond(data, req, res);
     })
     .catch((err) => {
-      res
-        .status(500)
-        .send({ message: err.message || "Something went wrong while getting list of users." });
+      const data = {
+        status: "500",
+        message: err.message || "Something went wrong while getting list of users.",
+      };
+      return errorRespond(data, req, res);
     });
 };
 // Create and Save a new User
 exports.create = (req, res) => {
-  res.send(req.body);
   // Validate request
   if (!req.body) {
-    return res.status(400).send({ message: "Please fill all required field" });
+    const data = {
+      status: "400",
+      message: "Please fill all required field",
+    };
+    return errorRespond(data, req, res);
   }
+
+  User.findOne({
+    email: req.body.email,
+  })
+    .then((user) => {
+      if (user) {
+        const data = { data: "", message: "Email Already Exists  Successfully." };
+        return successRepond(data, req, res);
+      }
+    })
+    .catch((err) => {
+      const data = {
+        status: "500",
+        message: "Error getting user with id " + req.params.id,
+      };
+      return errorRespond(data, req, res);
+    });
+
   // Create a new User
   const user = new User({
     first_name: req.body.first_name,
     last_name: req.body.last_name,
     email: req.body.email,
+    password: bcrypt.hashSync(req.body.password, 10),
     phone: req.body.phone,
+    user_type: req.body?.user_type || 1,
   });
   // Save user in the database
   user
     .save()
     .then((data) => {
-      res.send(data);
+      const datas = { data: data, message: "Users Created  Successfully." };
+      return successRepond(datas, req, res);
     })
     .catch((err) => {
-      res
-        .status(500)
-        .send({ message: err.message || "Something went wrong while creating new user." });
+      const data = {
+        status: "500",
+        message: err.message || "Something went wrong while creating new user.",
+      };
+      return errorRespond(data, req, res);
+    });
+};
+// Login user
+exports.signIn = function (req, res) {
+  // const datas = { data: req.body.password, message: "Users Created  Successfully." };
+  // return successRepond(datas, req, res);
+  User.findOne({
+    email: req.body.email,
+  })
+    .then(async (user) => {
+      if (!user) {
+        const data = {
+          status: "404",
+          message: "User not found with id " + req.params.id,
+        };
+        return errorRespond(data, req, res);
+      }
+      try {
+        const isMatch = await bcrypt.compare(req.body.password, user.password);
+        if (!isMatch) {
+          const data = {
+            status: "401",
+            message: "Invalid User Passwords",
+          };
+          return errorRespond(data, req, res);
+        }
+      } catch (err) {
+        const data = {
+          status: "401",
+          message: err.message || "Invalid User Passwords",
+        };
+        return errorRespond(data, req, res);
+      }
+
+      const token = jwt.sign({ email: user.email, fullName: user, _id: user._id }, "RESTFULAPIs");
+      const datas = { data: [token, user], message: "Users Logined  Successfully." };
+      return successRepond(datas, req, res);
+    })
+    .catch((err) => {
+      if (err.kind === "ObjectId") {
+        const data = {
+          status: "404",
+          message: " User not found with id " + req.params.id,
+        };
+        return errorRespond(data, req, res);
+      }
+      const data = {
+        status: "404",
+        message: err.message || "Something went wrong while creating new user.",
+      };
     });
 };
 // Find a single User with a id
