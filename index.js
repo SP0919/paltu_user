@@ -2,10 +2,10 @@ const express = require("express");
 require("dotenv").config();
 // console.log(process.env);
 const bodyParser = require("body-parser");
-
+var nodeMailer = require("nodemailer");
 // create express app
 const app = express();
-
+app.set("view engine", "ejs");
 // Setup server port
 const port = process.env.PORT || 4000;
 // parse requests of content-type - application/x-www-form-urlencoded

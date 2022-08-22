@@ -95,6 +95,46 @@ exports.update = (req, res) => {
         };
         return errorRespond(data, req, res);
       }
+      var image = "";
+      if (req.file) {
+        image = "/public/images/category/" + req.file.originalname;
+      } else {
+        image = category?.image;
+      }
+      // Find category and update it with the request body
+      Category.findByIdAndUpdate(
+        req.params.id,
+        {
+          name: req.body.name,
+          image: image,
+        },
+        { new: true }
+      )
+        .then((category) => {
+          if (!category) {
+            const data = {
+              status: "404",
+              message: "Category not found with id " + req.params.id,
+            };
+            return errorRespond(data, req, res);
+          }
+          const data = { data: category, message: "category  successfully!" };
+          return successRepond(data, req, res);
+        })
+        .catch((err) => {
+          if (err.kind === "ObjectId") {
+            const data = {
+              status: "404",
+              message: "Category not found with id " + req.params.id,
+            };
+            return errorRespond(data, req, res);
+          }
+          const data = {
+            status: "500",
+            message: "Error updating category with id " + req.params.id,
+          };
+          return errorRespond(data, req, res);
+        });
     })
     .catch((err) => {
       if (err.kind === "ObjectId") {
@@ -107,46 +147,6 @@ exports.update = (req, res) => {
       const data = {
         status: "500",
         message: "Error getting category with id " + req.params.id,
-      };
-      return errorRespond(data, req, res);
-    });
-  var image = "";
-  if (req.file) {
-    image = "/public/images/category/" + req.file.originalname;
-  } else {
-    image = checkCategory?.image;
-  }
-  // Find category and update it with the request body
-  Category.findByIdAndUpdate(
-    req.params.id,
-    {
-      name: req.body.name,
-      image: image,
-    },
-    { new: true }
-  )
-    .then((category) => {
-      if (!category) {
-        const data = {
-          status: "404",
-          message: "Category not found with id " + req.params.id,
-        };
-        return errorRespond(data, req, res);
-      }
-      const data = { data: category, message: "category  successfully!" };
-      return successRepond(data, req, res);
-    })
-    .catch((err) => {
-      if (err.kind === "ObjectId") {
-        const data = {
-          status: "404",
-          message: "Category not found with id " + req.params.id,
-        };
-        return errorRespond(data, req, res);
-      }
-      const data = {
-        status: "500",
-        message: "Error updating category with id " + req.params.id,
       };
       return errorRespond(data, req, res);
     });

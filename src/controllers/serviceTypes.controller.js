@@ -94,6 +94,39 @@ exports.update = (req, res) => {
         };
         return errorRespond(data, req, res);
       }
+      // Find serviceTypes and update it with the request body
+      ServiceType.findByIdAndUpdate(
+        req.params.id,
+        {
+          name: req.body.name,
+        },
+        { new: true }
+      )
+        .then((serviceTypes) => {
+          if (!serviceTypes) {
+            const data = {
+              status: "404",
+              message: "ServiceType not found with id " + req.params.id,
+            };
+            return errorRespond(data, req, res);
+          }
+          const data = { data: serviceTypes, message: "serviceTypes  successfully!" };
+          return successRepond(data, req, res);
+        })
+        .catch((err) => {
+          if (err.kind === "ObjectId") {
+            const data = {
+              status: "404",
+              message: "ServiceType not found with id " + req.params.id,
+            };
+            return errorRespond(data, req, res);
+          }
+          const data = {
+            status: "500",
+            message: "Error updating serviceTypes with id " + req.params.id,
+          };
+          return errorRespond(data, req, res);
+        });
     })
     .catch((err) => {
       if (err.kind === "ObjectId") {
@@ -110,40 +143,6 @@ exports.update = (req, res) => {
       return errorRespond(data, req, res);
     });
   var image = "";
-
-  // Find serviceTypes and update it with the request body
-  ServiceType.findByIdAndUpdate(
-    req.params.id,
-    {
-      name: req.body.name,
-    },
-    { new: true }
-  )
-    .then((serviceTypes) => {
-      if (!serviceTypes) {
-        const data = {
-          status: "404",
-          message: "ServiceType not found with id " + req.params.id,
-        };
-        return errorRespond(data, req, res);
-      }
-      const data = { data: serviceTypes, message: "serviceTypes  successfully!" };
-      return successRepond(data, req, res);
-    })
-    .catch((err) => {
-      if (err.kind === "ObjectId") {
-        const data = {
-          status: "404",
-          message: "ServiceType not found with id " + req.params.id,
-        };
-        return errorRespond(data, req, res);
-      }
-      const data = {
-        status: "500",
-        message: "Error updating serviceTypes with id " + req.params.id,
-      };
-      return errorRespond(data, req, res);
-    });
 };
 // Delete a ServiceType with the specified id in the request
 exports.delete = (req, res) => {
