@@ -6,6 +6,7 @@ const db = require("../../config/db.config");
 // db();
 var user = require("./user.routes");
 var category = require("./category.routes");
+var coupon = require("./coupon.routes");
 
 const defaultRoutes = [
   {
@@ -16,6 +17,10 @@ const defaultRoutes = [
     path: "/category",
     route: category,
   },
+  {
+    path: "/coupon",
+    route: coupon,
+  }
 ];
 
 defaultRoutes.forEach((route) => {

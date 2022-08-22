@@ -17,6 +17,9 @@ var storage = multer.diskStorage({
     if (file.fieldname == "category_image") {
       imagePath = path.join(des, "/public/images/category/");
     }
+    if (file.fieldname == "coupon_image") {
+      imagePath = path.join(des, "/public/images/coupon/");
+    }
 
     if (!fs.existsSync(imagePath)) {
       var shell = require("shelljs");
