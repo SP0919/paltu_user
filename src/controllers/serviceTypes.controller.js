@@ -1,21 +1,21 @@
-const Category = require("../models/category.model.js");
-
-// Retrieve and return all category from the database.
+const ServiceType = require("../models/serviceTypes.model");
+const { errorRespond, successRepond } = require("../utils/responseHandler.util");
+// Retrieve and return all serviceTypes from the database.
 exports.findAll = (req, res) => {
-  Category.find()
-    .then((category) => {
-      const data = { data: category, message: "category  successfully!" };
+  ServiceType.find()
+    .then((serviceTypes) => {
+      const data = { data: serviceTypes, message: "serviceTypes  successfully!" };
       return successRepond(data, req, res);
     })
     .catch((err) => {
       const data = {
         status: "500",
-        message: err.message || "Something went wrong while getting list of category.",
+        message: err.message || "Something went wrong while getting list of serviceTypes.",
       };
       return errorRespond(data, req, res);
     });
 };
-// Create and Save a new Category
+// Create and Save a new ServiceType
 exports.create = (req, res) => {
   // Validate request
   if (!req.body) {
@@ -25,57 +25,56 @@ exports.create = (req, res) => {
     };
     return errorRespond(data, req, res);
   }
-  // Create a new Category
-  const category = new Category({
+  // Create a new ServiceType
+  const serviceTypes = new ServiceType({
     name: req.body.name,
-    image: "/public/images/category/" + req.file.originalname,
   });
-  // Save category in the database
-  category
+  // Save serviceTypes in the database
+  serviceTypes
     .save()
     .then((data) => {
-      const dataS = { data: category, message: "category  successfully!" };
+      const dataS = { data: serviceTypes, message: "serviceTypes  successfully!" };
       return successRepond(dataS, req, res);
     })
     .catch((err) => {
       const data = {
         status: "500",
-        message: err.message || "Something went wrong while getting list of category.",
+        message: err.message || "Something went wrong while getting list of serviceTypes.",
       };
       return errorRespond(data, req, res);
     });
 };
-// Find a single Category with a id
+// Find a single ServiceType with a id
 exports.findOne = (req, res) => {
-  Category.findById(req.params.id)
-    .then((category) => {
-      if (!category) {
+  ServiceType.findById(req.params.id)
+    .then((serviceTypes) => {
+      if (!serviceTypes) {
         const data = {
           status: "404",
-          message: "Category not found with id " + req.params.id,
+          message: "ServiceType not found with id " + req.params.id,
         };
         return errorRespond(data, req, res);
       }
-      const data = { data: category, message: "category  successfully!" };
+      const data = { data: serviceTypes, message: "serviceTypes  successfully!" };
       return successRepond(data, req, res);
     })
     .catch((err) => {
       if (err.kind === "ObjectId") {
         const data = {
           status: "404",
-          message: "Category not found with id " + req.params.id,
+          message: "ServiceType not found with id " + req.params.id,
         };
         return errorRespond(data, req, res);
       }
 
       const data = {
         status: "500",
-        message: "Error getting category with id " + req.params.id,
+        message: "Error getting serviceTypes with id " + req.params.id,
       };
       return errorRespond(data, req, res);
     });
 };
-// Update a Category identified by the id in the request
+// Update a ServiceType identified by the id in the request
 exports.update = (req, res) => {
   // console.log(req.body);
   // Validate Request
@@ -86,12 +85,12 @@ exports.update = (req, res) => {
     };
     return errorRespond(data, req, res);
   }
-  const checkCategory = Category.findById(req.params.id)
-    .then((category) => {
-      if (!category) {
+  const checkServiceType = ServiceType.findById(req.params.id)
+    .then((serviceTypes) => {
+      if (!serviceTypes) {
         const data = {
           status: "404",
-          message: "Category not found with id " + req.params.id,
+          message: "ServiceType not found with id " + req.params.id,
         };
         return errorRespond(data, req, res);
       }
@@ -100,82 +99,77 @@ exports.update = (req, res) => {
       if (err.kind === "ObjectId") {
         const data = {
           status: "404",
-          message: "Category not found with id " + req.params.id,
+          message: "ServiceType not found with id " + req.params.id,
         };
         return errorRespond(data, req, res);
       }
       const data = {
         status: "500",
-        message: "Error getting category with id " + req.params.id,
+        message: "Error getting serviceTypes with id " + req.params.id,
       };
       return errorRespond(data, req, res);
     });
   var image = "";
-  if (req.file) {
-    image = "/public/images/category/" + req.file.originalname;
-  } else {
-    image = checkCategory?.image;
-  }
-  // Find category and update it with the request body
-  Category.findByIdAndUpdate(
+
+  // Find serviceTypes and update it with the request body
+  ServiceType.findByIdAndUpdate(
     req.params.id,
     {
       name: req.body.name,
-      image: image,
     },
     { new: true }
   )
-    .then((category) => {
-      if (!category) {
+    .then((serviceTypes) => {
+      if (!serviceTypes) {
         const data = {
           status: "404",
-          message: "Category not found with id " + req.params.id,
+          message: "ServiceType not found with id " + req.params.id,
         };
         return errorRespond(data, req, res);
       }
-      const data = { data: category, message: "category  successfully!" };
+      const data = { data: serviceTypes, message: "serviceTypes  successfully!" };
       return successRepond(data, req, res);
     })
     .catch((err) => {
       if (err.kind === "ObjectId") {
         const data = {
           status: "404",
-          message: "Category not found with id " + req.params.id,
+          message: "ServiceType not found with id " + req.params.id,
         };
         return errorRespond(data, req, res);
       }
       const data = {
         status: "500",
-        message: "Error updating category with id " + req.params.id,
+        message: "Error updating serviceTypes with id " + req.params.id,
       };
       return errorRespond(data, req, res);
     });
 };
-// Delete a Category with the specified id in the request
+// Delete a ServiceType with the specified id in the request
 exports.delete = (req, res) => {
-  Category.findByIdAndRemove(req.params.id)
-    .then((category) => {
-      if (!category) {
+  ServiceType.findByIdAndRemove(req.params.id)
+    .then((serviceTypes) => {
+      if (!serviceTypes) {
         const data = {
           status: "404",
-          message: "category not found with id " + req.params.id,
+          message: "serviceTypes not found with id " + req.params.id,
         };
         return errorRespond(data, req, res);
       }
-      const data = { data: "", message: "category deleted successfully!" };
+      const data = { data: "", message: "serviceTypes deleted successfully!" };
       return successRepond(data, req, res);
     })
     .catch((err) => {
       if (err.kind === "ObjectId" || err.name === "NotFound") {
         const data = {
           status: "404",
-          message: "category not found with id " + req.params.id,
+          message: "serviceTypes not found with id " + req.params.id,
         };
         return errorRespond(data, req, res);
       }
       const data = {
         status: "500",
-        message: "Could not delete category with id " + req.params.id,
+        message: "Could not delete serviceTypes with id " + req.params.id,
       };
       return errorRespond(data, req, res);
     });

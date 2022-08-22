@@ -1,5 +1,6 @@
 const express = require("express");
 require("dotenv").config();
+// console.log(process.env);
 const bodyParser = require("body-parser");
 
 // create express app
