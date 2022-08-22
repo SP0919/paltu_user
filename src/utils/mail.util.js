@@ -1,10 +1,10 @@
 let transporter = nodeMailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
+  host: "smtp.mailtrap.io",
+  port: 2525,
   secure: true,
   auth: {
-    user: "xxx@xx.com",
-    pass: "xxxx",
+    user: "dbd66e44cdca26",
+    pass: "7feffd7828b103",
   },
 });
 let mailOptions = {
