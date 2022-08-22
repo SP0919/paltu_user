@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const serviceProviderController = require("../controllers/serviceProvider.controller");
 const isAuthenticated = require("../middlewares/authenticate.middleware");
+
 // let upload = multer();
 // Retrieve all users
 router.get("/", isAuthenticated, serviceProviderController.findAll);

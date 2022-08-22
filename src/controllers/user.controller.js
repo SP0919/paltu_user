@@ -232,26 +232,17 @@ exports.delete = (req, res) => {
       return errorRespond(data, req, res);
     });
 };
-// change password a pasword with the user id 
-    exports.changePassword = (req, res) => {
-      
-      var  userid= "63032b592bfc3d2495437566";
-      User.findById(userid)
-      .then((userid) => {
-        if(req.body.confirmpassword == req.body.newpassword){
-          return res.status(400).send({message: "password match"});
-        }
-        else{
-            return res.status(404).send({message: "password not match" +  "63032b592bfc3d2495437566"});
-          }
-          
-        })
-        if(!req.body.confirmpassword ){
-          return res.status(400).send({message: "fill required field"});
-        }
-         
-  
-      };
-      
-      
-        
+// change password a pasword with the user id
+exports.changePassword = (req, res) => {
+  var userid = "63032b592bfc3d2495437566";
+  User.findById(userid).then((userid) => {
+    if (req.body.confirmpassword == req.body.newpassword) {
+      return res.status(400).send({ message: "password match" });
+    } else {
+      return res.status(404).send({ message: "password not match" + "63032b592bfc3d2495437566" });
+    }
+  });
+  if (!req.body.confirmpassword) {
+    return res.status(400).send({ message: "fill required field" });
+  }
+};

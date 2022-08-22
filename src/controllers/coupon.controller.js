@@ -1,5 +1,5 @@
 const Coupon = require("../models/coupon.model.js");
-
+const { errorRespond, successRepond } = require("../utils/responseHandler.util");
 // Retrieve and return all coupon from the database.
 exports.findAll = (req, res) => {
   Coupon.find()
