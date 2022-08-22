@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
 const User = require("../models/user.model.js");
 const { errorRespond, successRepond } = require("../utils/responseHandler.util");
-
+// var transporter = require("../utils/mail.util");
 // Retrieve and return all users from the database.
 exports.findAll = (req, res) => {
   User.find()
@@ -246,3 +246,63 @@ exports.changePassword = (req, res) => {
     return res.status(400).send({ message: "fill required field" });
   }
 };
+// change password a pasword with the user id
+exports.forgetPassword = (req, res) => {
+  User.findOne({
+    email: req.body.email,
+  })
+    .then((user) => {
+      if (!userid) {
+        const data = {
+          status: "500",
+          message: "Invalid Email",
+        };
+        return errorRespond(data, req, res);
+      }
+      let mailOptions = {
+        from: "sandeep@pixlerlab.com", // sender address
+        to: req.body.email, // list of receivers
+        subject: "Reset Password", // Subject line
+        // text: req.body.body, // plain text body
+        html: '<a href="">Reset Password</a>', // html body
+      };
+
+      // transporter.sendMail(mailOptions, (error, info) => {
+      //   if (error) {
+      //     return console.log(error);
+      //   }
+      //   console.log("Message %s sent: %s", info.messageId, info.response);
+      //   res.render("index");
+      // });
+      const data = { data: "", message: "user deleted successfully!" };
+      return successRepond(data, req, res);
+    })
+    .catch((err) => {
+      if (err.kind === "ObjectId" || err.name === "NotFound") {
+        const data = {
+          status: "404",
+          message: "user not found with id " + req.params.id,
+        };
+        return errorRespond(data, req, res);
+      }
+      const data = {
+        status: "500",
+        message: "Could not delete user with id " + req.params.id,
+      };
+      return errorRespond(data, req, res);
+    });
+};
+// // change password a pasword with the user id
+// exports.resetPassword = function (req, res) => {
+//   var userid = "63032b592bfc3d2495437566";
+//   User.findById(userid).then((userid) => {
+//     if (req.body.confirmpassword == req.body.newpassword) {
+//       return res.status(400).send({ message: "password match" });
+//     } else {
+//       return res.status(404).send({ message: "password not match" + "63032b592bfc3d2495437566" });
+//     }
+//   });
+//   if (!req.body.confirmpassword) {
+//     return res.status(400).send({ message: "fill required field" });
+//   }
+// };

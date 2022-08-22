@@ -99,8 +99,9 @@ exports.update = (req, res) => {
       if (req.file) {
         image = "/public/images/category/" + req.file.originalname;
       } else {
-        image = category?.image;
+        image = category.image;
       }
+      // console.log(req.body);
       // Find category and update it with the request body
       Category.findByIdAndUpdate(
         req.params.id,
