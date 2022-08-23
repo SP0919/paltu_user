@@ -9,6 +9,8 @@ var category = require("./category.routes");
 var coupon = require("./coupon.routes");
 var serviceProvider = require("./serviceProvider.route");
 var serviceTypes = require("./serviceTypes.route");
+var review = require("./review.routes");
+
 
 const defaultRoutes = [
   {
@@ -31,6 +33,11 @@ const defaultRoutes = [
   {
     path: "/service-provider",
     route: serviceProvider,
+  },
+  {
+   path: "/review",
+   route: review,
+
   },
 ];
 

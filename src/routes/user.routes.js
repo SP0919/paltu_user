@@ -9,7 +9,7 @@ let upload = multer();
 router.get("/", userController.findAll);
 // Create a new user
 router.post("/register", upload.single("user_profile"), userController.create);
-router.post("/login", userController.signIn);
+router.post("/login", upload.none(), userController.signIn);
 // Retrieve a single user with id
 router.get("/:id", isAuthenticated, upload.none(), userController.findOne);
 // Update a user with id
