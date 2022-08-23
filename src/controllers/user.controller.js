@@ -11,14 +11,14 @@ exports.findAll = (req, res) => {
     .sort({ createdAt: -1 })
     .then((users) => {
       const data = { data: users, message: "Users fetched  Successfully." };
-      return successRepond(data, req, res);
+      return res.json(successRepond(data));
     })
     .catch((err) => {
       const data = {
         status: "500",
         message: err.message || "Something went wrong while getting list of users.",
       };
-      return errorRespond(data, req, res);
+      return res.json(errorRespond(data));
     });
 };
 // Create and Save a new User
@@ -29,7 +29,7 @@ exports.create = (req, res) => {
       status: "400",
       message: "Please fill all required field",
     };
-    return errorRespond(data, req, res);
+    return res.json(errorRespond(data));
   }
 
   User.findOne({
@@ -38,7 +38,7 @@ exports.create = (req, res) => {
     .then((user) => {
       if (user) {
         const data = { data: "", message: "Email Already Exists  Successfully." };
-        return successRepond(data, req, res);
+        return res.json(successRepond(data));
       }
     })
     .catch((err) => {
@@ -46,7 +46,7 @@ exports.create = (req, res) => {
         status: "500",
         message: "Error getting user with id " + req.params.id,
       };
-      return errorRespond(data, req, res);
+      return res.json(errorRespond(data));
     });
 
   // Create a new User
@@ -63,20 +63,20 @@ exports.create = (req, res) => {
     .save()
     .then((data) => {
       const datas = { data: data, message: "Users Created  Successfully." };
-      return successRepond(datas, req, res);
+      return res.json(successRepond(datas));
     })
     .catch((err) => {
       const data = {
         status: "500",
         message: err.message || "Something went wrong while creating new user.",
       };
-      return errorRespond(data, req, res);
+      return res.json(errorRespond(data));
     });
 };
 // Login user
 exports.signIn = function (req, res) {
   // const datas = { data: req.body.password, message: "Users Created  Successfully." };
-  // return successRepond(datas, req, res);
+  // return successRepond(datas);
   User.findOne({
     email: req.body.email,
   })
@@ -86,7 +86,7 @@ exports.signIn = function (req, res) {
           status: "404",
           message: "User not found with id " + req.params.id,
         };
-        return errorRespond(data, req, res);
+        return res.json(errorRespond(data));
       }
       try {
         const isMatch = await bcrypt.compare(req.body.password, user.password);
@@ -95,14 +95,14 @@ exports.signIn = function (req, res) {
             status: "401",
             message: "Invalid User Passwords",
           };
-          return errorRespond(data, req, res);
+          return res.json(errorRespond(data));
         }
       } catch (err) {
         const data = {
           status: "401",
           message: err.message || "Invalid User Passwords",
         };
-        return errorRespond(data, req, res);
+        return res.json(errorRespond(data));
       }
 
       const token = jwt.sign(
@@ -110,7 +110,7 @@ exports.signIn = function (req, res) {
         process.env.TOKEN_SECRET
       );
       const datas = { data: [token, user], message: "Users Logined  Successfully." };
-      return successRepond(datas, req, res);
+      return res.json(successRepond(datas));
     })
     .catch((err) => {
       if (err.kind === "ObjectId") {
@@ -118,13 +118,13 @@ exports.signIn = function (req, res) {
           status: "404",
           message: " User not found with id " + req.params.id,
         };
-        return errorRespond(data, req, res);
+        return res.json(errorRespond(data));
       }
       const data = {
         status: "404",
         message: err.message || "Something went wrong while creating new user.",
       };
-      return errorRespond(data, req, res);
+      return res.json(errorRespond(data));
     });
 };
 // Find a single User with a id
@@ -136,10 +136,10 @@ exports.findOne = (req, res) => {
           status: "500",
           message: "User not found with id " + req.params.id,
         };
-        return errorRespond(data, req, res);
+        return res.json(errorRespond(data));
       }
       const datas = { data: user, message: "Users Data  Successfully." };
-      return successRepond(datas, req, res);
+      return res.json(successRepond(datas));
     })
     .catch((err) => {
       if (err.kind === "ObjectId") {
@@ -147,13 +147,13 @@ exports.findOne = (req, res) => {
           status: "500",
           message: "User not found with id " + req.params.id,
         };
-        return errorRespond(data, req, res);
+        return res.json(errorRespond(data));
       }
       const data = {
         status: "500",
         message: "Error getting user with id " + req.params.id,
       };
-      return errorRespond(data, req, res);
+      return res.json(errorRespond(data));
     });
 };
 // Update a User identified by the id in the request
@@ -164,7 +164,7 @@ exports.update = (req, res) => {
       status: "400",
       message: "Please fill all required field",
     };
-    return errorRespond(data, req, res);
+    return res.json(errorRespond(data));
   }
   // Find user and update it with the request body
   User.findByIdAndUpdate(
@@ -183,10 +183,10 @@ exports.update = (req, res) => {
           status: "404",
           message: "user not found with id " + req.params.id,
         };
-        return errorRespond(data, req, res);
+        return res.json(errorRespond(data));
       }
       const data = { data: user, message: "user deleted successfully!" };
-      return successRepond(data, req, res);
+      return res.json(successRepond(data));
     })
     .catch((err) => {
       if (err.kind === "ObjectId") {
@@ -194,13 +194,13 @@ exports.update = (req, res) => {
           status: "404",
           message: "user not found with id " + req.params.id,
         };
-        return errorRespond(data, req, res);
+        return res.json(errorRespond(data));
       }
       const data = {
         status: "500",
         message: "Error updating user with id " + req.params.id,
       };
-      return errorRespond(data, req, res);
+      return res.json(errorRespond(data));
     });
 };
 // Delete a User with the specified id in the request
@@ -212,10 +212,10 @@ exports.delete = (req, res) => {
           status: "404",
           message: "user not found with id " + req.params.id,
         };
-        return errorRespond(data, req, res);
+        return res.json(errorRespond(data));
       }
       const data = { data: "", message: "user deleted successfully!" };
-      return successRepond(data, req, res);
+      return res.json(successRepond(data));
     })
     .catch((err) => {
       if (err.kind === "ObjectId" || err.name === "NotFound") {
@@ -223,13 +223,13 @@ exports.delete = (req, res) => {
           status: "404",
           message: "user not found with id " + req.params.id,
         };
-        return errorRespond(data, req, res);
+        return res.json(errorRespond(data));
       }
       const data = {
         status: "500",
         message: "Could not delete user with id " + req.params.id,
       };
-      return errorRespond(data, req, res);
+      return res.json(errorRespond(data));
     });
 };
 // change password a pasword with the user id
@@ -251,48 +251,79 @@ exports.forgetPassword = (req, res) => {
   User.findOne({
     email: req.body.email,
   })
-    .then((user) => {
-      if (!userid) {
+    .then(async (user) => {
+      if (!user) {
         const data = {
           status: "500",
           message: "Invalid Email",
         };
-        return errorRespond(data, req, res);
+        return res.json(errorRespond(data));
       }
-      let mailOptions = {
-        from: "sandeep@pixlerlab.com", // sender address
-        to: req.body.email, // list of receivers
-        subject: "Reset Password", // Subject line
-        // text: req.body.body, // plain text body
-        html: '<a href="">Reset Password</a>', // html body
+      transporter
+        .sendMail()
+        .then((user) => {
+          if (!user) {
+            const data = {
+              status: "404",
+              message: "user not found with id " + req.params.id,
+            };
+            return res.json(errorRespond(data));
+          }
+          const data = { data: "", message: "user deleted successfully!" };
+          return res.json(successRepond(data));
+        })
+        .catch((err) => {
+          if (err.kind === "ObjectId" || err.name === "NotFound") {
+            const data = {
+              status: "404",
+              message: "user not found with id " + req.params.id,
+            };
+            return res.json(errorRespond(data));
+          }
+          const data = {
+            status: "500",
+            message: "Could not delete user with id " + req.params.id,
+          };
+          return res.json(errorRespond(data));
+        });
+
+      var nodemailer = require("nodemailer");
+
+      var transporter = nodemailer.createTransport({
+        host: "smtp-relay.sendinblue.com",
+        port: 587,
+        auth: {
+          user: "test.pixlerlab@gmail.com",
+          pass: "WsxB7yt8IH5MhZKR",
+        },
+      });
+
+      var mailOptions = {
+        from: process.env.EMAIL_FROM,
+        to: "chaudharysandeep778@gmail.com",
+        subject: "Sending Email using Node.js",
+        text: "That was easy!",
       };
 
-      // transporter.sendMail(mailOptions, (error, info) => {
-      //   if (error) {
-      //     return console.log(error);
-      //   }
-      //   console.log("Message %s sent: %s", info.messageId, info.response);
-      //   res.render("index");
-      // });
-      const data = { data: "", message: "user deleted successfully!" };
-      return successRepond(data, req, res);
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Email sent: " + info.response);
+        }
+      });
+      const data = { data: "info", message: "user deleted successfully!" };
+      return res.json(successRepond(data));
     })
     .catch((err) => {
-      if (err.kind === "ObjectId" || err.name === "NotFound") {
-        const data = {
-          status: "404",
-          message: "user not found with id " + req.params.id,
-        };
-        return errorRespond(data, req, res);
-      }
       const data = {
         status: "500",
-        message: "Could not delete user with id " + req.params.id,
+        message: err.message || "Could not delete user with id " + req.params.id,
       };
-      return errorRespond(data, req, res);
+      return res.json(errorRespond(data));
     });
 };
-// // change password a pasword with the user id
+// change password a pasword with the user id
 // exports.resetPassword = function (req, res) => {
 //   var userid = "63032b592bfc3d2495437566";
 //   User.findById(userid).then((userid) => {

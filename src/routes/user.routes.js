@@ -18,6 +18,8 @@ router.put("/:id", isAuthenticated, upload.none(), userController.update);
 router.delete("/:id", userController.delete);
 
 router.post("/change-password", upload.none(), userController.changePassword);
+router.post("/forget-password", upload.none(), userController.forgetPassword);
+// router.post("/reset-password", upload.none(), userController.resetPassword);
 
 // router.delete("/:id", userController.delete);
 module.exports = router;

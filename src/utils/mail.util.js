@@ -1,4 +1,5 @@
-exports.transporter = nodeMailer.createTransport({
+const nodeMailer = require("nodemailer");
+var transporter = nodeMailer.createTransport({
   host: "smtp.mailtrap.io",
   port: 2525,
   secure: true,
@@ -7,3 +8,5 @@ exports.transporter = nodeMailer.createTransport({
     pass: "7feffd7828b103",
   },
 });
+
+module.exports = transporter;
