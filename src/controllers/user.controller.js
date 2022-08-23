@@ -6,20 +6,20 @@ const User = require("../models/user.model.js");
 const { errorRespond, successRepond } = require("../utils/responseHandler.util");
 const ForgetpasswordLog = require("../models/forgetPasswordLogs.model");
 // Retrieve and return all users from the database.
-exports.findAll = (req, res) => {
-  User.find()
-    .sort({ createdAt: -1 })
-    .then((users) => {
+exports.findAll = async (req, res) => {
+  try {
+    let users = await User.find().sort({ createdAt: -1 });
+    if (users) {
       const data = { data: users, message: "Users fetched  Successfully." };
       return res.json(successRepond(data));
-    })
-    .catch((err) => {
-      const data = {
-        status: "500",
-        message: err.message || "Something went wrong while getting list of users.",
-      };
-      return res.json(errorRespond(data));
-    });
+    }
+  } catch (err) {
+    const data = {
+      status: "500",
+      message: err.message || "Something went wrong while getting list of users.",
+    };
+    return res.json(errorRespond(data));
+  }
 };
 // Create and Save a new User
 exports.create = async (req, res) => {
@@ -40,12 +40,12 @@ exports.create = async (req, res) => {
     });
 
     let userData = await user.save();
-    const data = { data: userData, message: "Email Already Exists  Successfully." };
+    const data = { data: userData, message: "Email Register  Successfully." };
     res.json(successRepond(data));
   } catch (err) {
     const data = {
       status: "500",
-      message: err.message || "Error getting user with id " + req.params.id,
+      message: err.message || "Something went wrong.",
     };
     return res.json(errorRespond(data));
   }
@@ -54,8 +54,9 @@ exports.create = async (req, res) => {
 exports.signIn = async function (req, res) {
   try {
     let isUser = await User.findOne({ email: req.body.email });
+    console.log(isUser);
     if (isUser) {
-      const isMatch = await bcrypt.compare(req.body.password, user.password);
+      const isMatch = await bcrypt.compare(req.body.password, isUser.password);
       if (!isMatch) {
         const data = {
           status: "401",
@@ -64,124 +65,74 @@ exports.signIn = async function (req, res) {
         return res.json(errorRespond(data));
       }
       const token = jwt.sign(
-        { email: user.email, fullName: user, _id: user._id },
+        { email: isUser.email, fullName: isUser, _id: isUser._id },
         process.env.TOKEN_SECRET
       );
-      const datas = { data: [token, user], message: "Users Logined  Successfully." };
+      const datas = { data: [token, isUser], message: "Users Login  Successfully." };
       return res.json(successRepond(datas));
     }
   } catch (err) {
     const data = {
       status: "500",
-      message: err.message || "Error getting user with id " + req.params.id,
+      message: err.message || "Something went wrong",
     };
     return res.json(errorRespond(data));
   }
 };
 // Find a single User with a id
-exports.findOne = (req, res) => {
-  User.findById(req.params.id)
-    .then((user) => {
-      if (!user) {
-        const data = {
-          status: "500",
-          message: "User not found with id " + req.params.id,
-        };
-        return res.json(errorRespond(data));
-      }
+exports.findOne = async (req, res) => {
+  try {
+    let User = await User.findById(req.params.id);
+    if (User) {
       const datas = { data: user, message: "Users Data  Successfully." };
       return res.json(successRepond(datas));
-    })
-    .catch((err) => {
-      if (err.kind === "ObjectId") {
-        const data = {
-          status: "500",
-          message: "User not found with id " + req.params.id,
-        };
-        return res.json(errorRespond(data));
-      }
-      const data = {
-        status: "500",
-        message: "Error getting user with id " + req.params.id,
-      };
-      return res.json(errorRespond(data));
-    });
-};
-// Update a User identified by the id in the request
-exports.update = (req, res) => {
-  // Validate Request
-  if (!req.body) {
+    }
+  } catch (err) {
     const data = {
-      status: "400",
-      message: "Please fill all required field",
+      status: "500",
+      message: err.message || "Something went wrong",
     };
     return res.json(errorRespond(data));
   }
-  // Find user and update it with the request body
-  User.findByIdAndUpdate(
-    req.params.id,
-    {
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
-      email: req.body.last_name,
-      phone: req.body.last_name,
-    },
-    { new: true }
-  )
-    .then((user) => {
-      if (!user) {
-        const data = {
-          status: "404",
-          message: "user not found with id " + req.params.id,
-        };
-        return res.json(errorRespond(data));
-      }
-      const data = { data: user, message: "user deleted successfully!" };
+};
+// Update a User identified by the id in the request
+exports.update = async (req, res) => {
+  const { first_name, last_name, phone } = req.body;
+  try {
+    let IsUser = await User.findByIdAndUpdate(
+      req.params.id,
+      { first_name, last_name, phone },
+      { new: true }
+    );
+    if (IsUser) {
+      const data = { data: user, message: "user Updated successfully!" };
       return res.json(successRepond(data));
-    })
-    .catch((err) => {
-      if (err.kind === "ObjectId") {
-        const data = {
-          status: "404",
-          message: "user not found with id " + req.params.id,
-        };
-        return res.json(errorRespond(data));
-      }
-      const data = {
-        status: "500",
-        message: "Error updating user with id " + req.params.id,
-      };
-      return res.json(errorRespond(data));
-    });
+    }
+    // Find user and update it with the request body
+  } catch (err) {
+    const data = {
+      status: "500",
+      message: err.message || "Something went wrong",
+    };
+    return res.json(errorRespond(data));
+  }
 };
 // Delete a User with the specified id in the request
-exports.delete = (req, res) => {
-  User.findByIdAndRemove(req.params.id)
-    .then((user) => {
-      if (!user) {
-        const data = {
-          status: "404",
-          message: "user not found with id " + req.params.id,
-        };
-        return res.json(errorRespond(data));
-      }
-      const data = { data: "", message: "user deleted successfully!" };
+exports.delete = async (req, res) => {
+  try {
+    let IsUser = await User.findByIdAndRemove(req.params.id);
+    if (IsUser) {
+      const data = { data: user, message: "user Deleted successfully!" };
       return res.json(successRepond(data));
-    })
-    .catch((err) => {
-      if (err.kind === "ObjectId" || err.name === "NotFound") {
-        const data = {
-          status: "404",
-          message: "user not found with id " + req.params.id,
-        };
-        return res.json(errorRespond(data));
-      }
-      const data = {
-        status: "500",
-        message: "Could not delete user with id " + req.params.id,
-      };
-      return res.json(errorRespond(data));
-    });
+    }
+    // Find user and update it with the request body
+  } catch (err) {
+    const data = {
+      status: "500",
+      message: err.message || "Something went wrong",
+    };
+    return res.json(errorRespond(data));
+  }
 };
 // change password a pasword with the user id
 exports.changePassword = (req, res) => {
