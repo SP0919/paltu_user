@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const categoryController = require("../controllers/category.controller");
-const { upload, folder } = require("../services/imageUpload.service");
+
+const multer = require("multer");
+let upload = multer();
 // let upload = multer();
 // Retrieve all users
 router.get("/", categoryController.findAll);
