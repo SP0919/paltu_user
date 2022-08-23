@@ -8,7 +8,6 @@ const errorRespond = (err) => {
     error: [],
     message: err.message,
   };
-  const status = "";
   return response;
 };
 

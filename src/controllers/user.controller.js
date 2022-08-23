@@ -22,112 +22,61 @@ exports.findAll = (req, res) => {
     });
 };
 // Create and Save a new User
-exports.create = (req, res) => {
-  // Validate request
-  if (!req.body) {
+exports.create = async (req, res) => {
+  const { first_name, last_name, email, user_type, phone } = req.body;
+  try {
+    let isUser = await User.findOne({ email: req.body.email });
+    if (isUser) {
+      const data = { data: "", message: "Email Already Exists  Successfully." };
+      return res.json(successRepond(data));
+    }
+    let user = new User({
+      first_name,
+      last_name,
+      email,
+      user_type,
+      phone,
+      password: bcrypt.hashSync(req.body.password, 10),
+    });
+
+    let userData = await user.save();
+    const data = { data: userData, message: "Email Already Exists  Successfully." };
+    res.json(successRepond(data));
+  } catch (err) {
     const data = {
-      status: "400",
-      message: "Please fill all required field",
+      status: "500",
+      message: err.message || "Error getting user with id " + req.params.id,
     };
     return res.json(errorRespond(data));
   }
-
-  User.findOne({
-    email: req.body.email,
-  })
-    .then((user) => {
-      if (user) {
-        const data = { data: "", message: "Email Already Exists  Successfully." };
-        res.json(successRepond(data));
-      }
-    })
-    .catch((err) => {
-      const data = {
-        status: "500",
-        message: err.message || "Error getting user with id " + req.params.id,
-      };
-      return res.json(errorRespond(data));
-    });
-
-  // Create a new User
-  const user = new User({
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
-    email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 10),
-    phone: req.body.phone,
-    user_type: req.body?.user_type || 1,
-  });
-  // Save user in the database
-  user
-    .save()
-    .then((data) => {
-      const datas = { data: data, message: "Users Created  Successfully." };
-      return res.json(successRepond(datas));
-    })
-    .catch((err) => {
-      const data = {
-        status: "500",
-        message: err.message || "Something went wrong while creating new user.",
-      };
-      res.setHeader("Content-Type", "text/html");
-      res.write("<p>Hello World</p>");
-      // return res.send(500).json(errorRespond(data));
-    });
 };
 // Login user
-exports.signIn = function (req, res) {
-  // const datas = { data: req.body.password, message: "Users Created  Successfully." };
-  // return successRepond(datas);
-  User.findOne({
-    email: req.body.email,
-  })
-    .then(async (user) => {
-      if (!user) {
-        const data = {
-          status: "404",
-          message: "User not found with id " + req.params.id,
-        };
-        return res.json(errorRespond(data));
-      }
-      try {
-        const isMatch = await bcrypt.compare(req.body.password, user.password);
-        if (!isMatch) {
-          const data = {
-            status: "401",
-            message: "Invalid User Passwords",
-          };
-          return res.json(errorRespond(data));
-        }
-      } catch (err) {
+exports.signIn = async function (req, res) {
+  try {
+    let isUser = await User.findOne({ email: req.body.email });
+    if (isUser) {
+      const isMatch = await bcrypt.compare(req.body.password, user.password);
+      if (!isMatch) {
         const data = {
           status: "401",
-          message: err.message || "Invalid User Passwords",
+          message: "Invalid User Passwords",
         };
         return res.json(errorRespond(data));
       }
-
       const token = jwt.sign(
         { email: user.email, fullName: user, _id: user._id },
         process.env.TOKEN_SECRET
       );
       const datas = { data: [token, user], message: "Users Logined  Successfully." };
       return res.json(successRepond(datas));
-    })
-    .catch((err) => {
-      if (err.kind === "ObjectId") {
-        const data = {
-          status: "404",
-          message: " User not found with id " + req.params.id,
-        };
-        return res.json(errorRespond(data));
-      }
-      const data = {
-        status: "404",
-        message: err.message || "Something went wrong while creating new user.",
-      };
-      return res.json(errorRespond(data));
-    });
+    }
+  } catch (err) {
+    const data = {
+      status: "500",
+      message: err.message || "Error getting user with id " + req.params.id,
+    };
+    return res.json(errorRespond(data));
+  }
 };
 // Find a single User with a id
 exports.findOne = (req, res) => {

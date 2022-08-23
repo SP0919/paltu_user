@@ -1,19 +1,21 @@
 const Category = require("../models/category.model.js");
 const { errorRespond, successRepond } = require("../utils/responseHandler.util");
 // Retrieve and return all category from the database.
-exports.findAll = (req, res) => {
-  Category.find()
-    .then((category) => {
+exports.findAll = async (req, res) => {
+  try {
+    let category = await Category.find();
+    // console.log(category);
+    if (category) {
       const data = { data: category, message: "category  successfully!" };
-      return successRepond(data, req, res);
-    })
-    .catch((err) => {
-      const data = {
-        status: "500",
-        message: err.message || "Something went wrong while getting list of category.",
-      };
-      return errorRespond(data, req, res);
-    });
+      return res.send(successRepond(data));
+    }
+  } catch (err) {
+    const data = {
+      status: "500",
+      message: err.message || "Something went wrong while getting list of category.",
+    };
+    return res.send(errorRespond(data));
+  }
 };
 // Create and Save a new Category
 exports.create = (req, res) => {
