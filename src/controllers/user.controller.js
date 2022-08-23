@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
 const User = require("../models/user.model.js");
 const { errorRespond, successRepond } = require("../utils/responseHandler.util");
-// var transporter = require("../utils/mail.util");
+const ForgetpasswordLog = require("../models/forgetPasswordLogs.model");
 // Retrieve and return all users from the database.
 exports.findAll = (req, res) => {
   User.find()
@@ -38,13 +38,13 @@ exports.create = (req, res) => {
     .then((user) => {
       if (user) {
         const data = { data: "", message: "Email Already Exists  Successfully." };
-        return res.json(successRepond(data));
+        res.json(successRepond(data));
       }
     })
     .catch((err) => {
       const data = {
         status: "500",
-        message: "Error getting user with id " + req.params.id,
+        message: err.message || "Error getting user with id " + req.params.id,
       };
       return res.json(errorRespond(data));
     });
@@ -70,7 +70,9 @@ exports.create = (req, res) => {
         status: "500",
         message: err.message || "Something went wrong while creating new user.",
       };
-      return res.json(errorRespond(data));
+      res.setHeader("Content-Type", "text/html");
+      res.write("<p>Hello World</p>");
+      // return res.send(500).json(errorRespond(data));
     });
 };
 // Login user
@@ -259,33 +261,8 @@ exports.forgetPassword = (req, res) => {
         };
         return res.json(errorRespond(data));
       }
-      transporter
-        .sendMail()
-        .then((user) => {
-          if (!user) {
-            const data = {
-              status: "404",
-              message: "user not found with id " + req.params.id,
-            };
-            return res.json(errorRespond(data));
-          }
-          const data = { data: "", message: "user deleted successfully!" };
-          return res.json(successRepond(data));
-        })
-        .catch((err) => {
-          if (err.kind === "ObjectId" || err.name === "NotFound") {
-            const data = {
-              status: "404",
-              message: "user not found with id " + req.params.id,
-            };
-            return res.json(errorRespond(data));
-          }
-          const data = {
-            status: "500",
-            message: "Could not delete user with id " + req.params.id,
-          };
-          return res.json(errorRespond(data));
-        });
+
+      ForgetpasswordLog.find({ user_id: req.user?._id, deleted_at: null }).then((user) => {});
 
       var nodemailer = require("nodemailer");
 
@@ -293,27 +270,33 @@ exports.forgetPassword = (req, res) => {
         host: "smtp-relay.sendinblue.com",
         port: 587,
         auth: {
-          user: "test.pixlerlab@gmail.com",
-          pass: "WsxB7yt8IH5MhZKR",
+          user: "sandeep@pixlerlab.com",
+          pass: "Iyhq84UOsMpW5t70",
         },
       });
 
       var mailOptions = {
         from: process.env.EMAIL_FROM,
-        to: "chaudharysandeep778@gmail.com",
-        subject: "Sending Email using Node.js",
-        text: "That was easy!",
+        to: "sandeep@pixlerlab.com",
+        subject: "Forget Password",
+        text: "Please Verify to change password",
+        html: "<h2>Hi! There</h2> <h5> This HTML content is  being send by NodeJS along with NodeMailer.</h5>",
       };
 
-      transporter.sendMail(mailOptions, function (error, info) {
+      await transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
           console.log(error);
+          const data = { data: "", message: "Unable to send mail" };
+
+          return res.json(successRepond(data));
         } else {
+          const data = { data: "", message: "Mail sent successfully!" };
           console.log("Email sent: " + info.response);
+          return res.json(successRepond(data));
         }
       });
-      const data = { data: "info", message: "user deleted successfully!" };
-      return res.json(successRepond(data));
+      // const data = { data: "info", message: "user deleted successfully!" };
+      // return res.json(successRepond(data));
     })
     .catch((err) => {
       const data = {
