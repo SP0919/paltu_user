@@ -9,17 +9,18 @@ let upload = multer();
 router.get("/", userController.findAll);
 // Create a new user
 router.post("/register", upload.single("user_profile"), userController.create);
-router.post("/login", userController.signIn);
+router.post("/login", upload.none(), userController.signIn);
 // Retrieve a single user with id
-router.get("/:id", isAuthenticated, upload.none(), userController.findOne);
+router.get("/:id", [isAuthenticated, upload.none()], userController.findOne);
 // Update a user with id
-router.put("/:id", isAuthenticated, upload.none(), userController.update);
+router.put("/:id", [isAuthenticated, upload.none()], userController.update);
 // Delete a user with id
 router.delete("/:id", userController.delete);
 
-router.post("/change-password", upload.none(), userController.changePassword);
-router.post("/forget-password", upload.none(), userController.forgetPassword);
-// router.post("/reset-password", upload.none(), userController.resetPassword);
+router.post("/change-password", [isAuthenticated, upload.none()], userController.changePassword);
+router.post("/forget-password", [upload.none(), isAuthenticated], userController.forgetPassword);
+router.get("/reset-password/:token", upload.none(), userController.resetPassword);
+router.post("/reset-password/:token", upload.none(), userController.updatePassword);
 
 // router.delete("/:id", userController.delete);
 module.exports = router;

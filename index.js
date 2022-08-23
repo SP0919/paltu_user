@@ -3,10 +3,16 @@ require("dotenv").config();
 // console.log(process.env);
 const bodyParser = require("body-parser");
 var cors = require("cors");
+var path = require("path");
 var nodeMailer = require("nodemailer");
 // create express app
+
 const app = express();
+app.use("/public", express.static(path.join(__dirname, "/public")));
+app.set("views", path.join(__dirname, "src/views"));
+app.engine("html", require("ejs").renderFile);
 app.set("view engine", "ejs");
+
 app.use(cors());
 // Setup server port
 const port = process.env.PORT || 4000;
@@ -24,6 +30,7 @@ app.use("/api", indexRouter);
 app.get("/", (req, res) => {
   res.json({ message: "Hello World" });
 });
+
 // define a root/default route
 
 // listen for requests

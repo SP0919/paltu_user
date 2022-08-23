@@ -6,7 +6,7 @@ const isAuthenticated = async (req, res, next) => {
   try {
     const token = req.headers.token;
 
-    if (!token) {
+    if (!token || token == undefined) {
       const data = {
         status: "500",
         message: "Please Login First",
