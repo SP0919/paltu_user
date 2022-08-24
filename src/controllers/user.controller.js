@@ -138,17 +138,38 @@ exports.delete = async (req, res) => {
   }
 };
 // change password a pasword with the user id
-exports.changePassword = (req, res) => {
-  var userid = "63032b592bfc3d2495437566";
-  User.findById(userid).then((userid) => {
-    if (req.body.confirmpassword == req.body.newpassword) {
-      return res.status(400).send({ message: "password match" });
-    } else {
-      return res.status(404).send({ message: "password not match" + "63032b592bfc3d2495437566" });
+exports.changePassword = async (req, res) => {
+  try {
+    const { password, new_password, confirm_password } = req.body;
+
+    if (new_password !== confirm_password) {
+      const data = {
+        status: "500",
+        message: "New password and confirm password not matched",
+      };
+      return res.json(errorRespond(data));
     }
-  });
-  if (!req.body.confirmpassword) {
-    return res.status(400).send({ message: "fill required field" });
+
+    let user = await User.findById(req.user._id);
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      const data = {
+        status: "500",
+        message: "Old Password Not matched",
+      };
+      return res.json(errorRespond(data));
+    }
+    let IsUser = await User.findByIdAndUpdate(user._id, { password }, { new: true });
+    if (IsUser) {
+      const data = { data: IsUser, message: "Password Updates  Successfully." };
+      return res.json(successRepond(data));
+    }
+  } catch (err) {
+    const data = {
+      status: "500",
+      message: err.message || "Something went wrong",
+    };
+    return res.json(errorRespond(data));
   }
 };
 // change password a pasword with the user id
