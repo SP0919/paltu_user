@@ -1,5 +1,5 @@
 "use strict";
-const { required } = require("@hapi/joi/lib/base.js");
+
 const bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
 const User = require("../models/user.model.js");
@@ -55,8 +55,8 @@ exports.create = async (req, res) => {
 exports.signIn = async function (req, res) {
   try {
     let isUser = await User.findOne({ email: req.body.email });
-    // console.log(isUser);
-    if (isUser) {
+    console.log(isUser);
+    if (isUser != null) {
       const isMatch = await bcrypt.compare(req.body.password, isUser.password);
       if (!isMatch) {
         const data = {
@@ -71,6 +71,12 @@ exports.signIn = async function (req, res) {
       );
       const datas = { data: { token: token, user: isUser }, message: "Users Login  Successfully." };
       return res.json(successRepond(datas));
+    } else {
+      const data = {
+        status: "500",
+        message: "Please register First",
+      };
+      return res.json(errorRespond(data));
     }
   } catch (err) {
     const data = {
@@ -172,11 +178,11 @@ exports.forgetPassword = async (req, res) => {
         url +
         '">Reset</a>',
     };
-    let isUser = User.findOne({
+    let isUser = await User.findOne({
       email: req.body.email,
     });
     if (isUser) {
-      console.log(req.baseUrl);
+      console.log(isUser);
       let IsMailSent = await ForgetpasswordLog.find({ user_id: req.user?._id, deleted_at: null });
       if (!IsMailSent) {
         await transporter.sendMail(mailOptions, async function (error, info) {
@@ -188,7 +194,7 @@ exports.forgetPassword = async (req, res) => {
           } else {
             const data = { data: "", message: "Mail sent successfully!" };
             let log = new ForgetpasswordLog({
-              user_id: res.user?._id,
+              user_id: isUser?._id,
               token: token,
             });
 
@@ -220,7 +226,7 @@ exports.forgetPassword = async (req, res) => {
             } else {
               const data = { data: "", message: "Mail sent successfully!" };
               let log = new ForgetpasswordLog({
-                user_id: res.user?._id,
+                user_id: isUser?._id,
                 token: token,
               });
 
@@ -274,10 +280,12 @@ exports.updatePassword = async (req, res) => {
       token: req.params.token,
       deleted_at: null,
     });
-    let isUser = User.findOne({
-      email: IsTokenValid?.user_id,
+    let isUser = await User.findOne({
+      _id: IsTokenValid?.user_id,
     });
-
+    console.log(IsTokenValid);
+    return;
+    findById;
     if (isUser) {
       let user = await User.findByIdAndUpdate(isUser?._id, { password }, { new: true });
       if (user) {
