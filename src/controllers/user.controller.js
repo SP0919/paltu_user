@@ -139,18 +139,28 @@ exports.delete = async (req, res) => {
 };
 // change password a pasword with the user id
 exports.changePassword = (req, res) => {
-  var userid = "63032b592bfc3d2495437566";
-  User.findById(userid).then((userid) => {
+  User.findById(req.user._id);
+   try{
     if (req.body.confirmpassword == req.body.newpassword) {
-      return res.status(400).send({ message: "password match" });
-    } else {
-      return res.status(404).send({ message: "password not match" + "63032b592bfc3d2495437566" });
-    }
-  });
-  if (!req.body.confirmpassword) {
-    return res.status(400).send({ message: "fill required field" });
-  }
-};
+      const data = {
+        status: "400",
+        message: "password match successfully",
+      };
+      return res.json(successRepond(data));
+       }
+     }
+     catch (err){
+     const data = {
+        status: "500",
+        message: err.message || "something wrong",
+
+     };
+     return res.send(errorRespond(data));
+     }
+  };
+
+
+ 
 // change password a pasword with the user id
 exports.forgetPassword = async (req, res) => {
   try {
