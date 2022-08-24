@@ -11,10 +11,10 @@ const isAuthenticated = async (req, res, next) => {
         status: "500",
         message: "Please Login First",
       };
-      return errorRespond(data, req, res);
+      return res.send(errorRespond(data));
     }
     const verify = await jwt.verify(token, process.env.TOKEN_SECRET);
-    // console.log(verify);
+    console.log(verify);
     req.user = await userModel.findById(verify._id);
     next();
   } catch (error) {
@@ -22,7 +22,7 @@ const isAuthenticated = async (req, res, next) => {
       status: "500",
       message: "Please Login First",
     };
-    return errorRespond(data, req, res);
+    return res.send(errorRespond(data));
   }
 };
 

@@ -1,4 +1,4 @@
-const { errorRespond, successRepond } = require("../utils/responseHandler.util");
+const { errorRespond, successRepond } = require("./responseHandler.util");
 module.exports.validateRequired = (req, res, next, schema) => {
   const options = {
     abortEarly: false, // include all errors

@@ -21,8 +21,9 @@ function loginValidation(req, res, next) {
 }
 
 function categoryValidation(req, res, next) {
-  const schema = Joi.object({
-    title: Joi.string().required(),
+  const schema =  Joi.object({
+    name: Joi.string().required(),
+    
   });
   validateRequest.validateRequired(req, res, next, schema);
 }
@@ -49,7 +50,15 @@ async function productValidation(req, res, next) {
 }
 async function reviewValidation(req, res, next) {
   const schema = await Joi.object({
-    commment: Joi.string().required(),
+    comment: Joi.string().required(),
+    review_to: Joi.string(),
+  });
+  await validateRequest.validateRequired(req, res, next, schema);
+}
+async function couponValidation(req, res, next) {
+  const schema = await Joi.object({
+    name: Joi.string().required(),
+    
   });
   await validateRequest.validateRequired(req, res, next, schema);
 }
@@ -59,4 +68,5 @@ module.exports = {
   categoryValidation,
   productValidation,
   reviewValidation,
+  couponValidation,
 };
