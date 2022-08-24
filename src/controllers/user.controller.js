@@ -25,7 +25,7 @@ exports.findAll = async (req, res) => {
 };
 // Create and Save a new User
 exports.create = async (req, res) => {
-  const { first_name, last_name, email, user_type, phone } = req.body;
+  const { user_name, email, user_type, phone } = req.body;
   try {
     let isUser = await User.findOne({ email: req.body.email });
     if (isUser) {
@@ -33,8 +33,7 @@ exports.create = async (req, res) => {
       return res.json(successRepond(data));
     }
     let user = new User({
-      first_name,
-      last_name,
+      user_name,
       email,
       user_type,
       phone,
@@ -99,13 +98,9 @@ exports.findOne = async (req, res) => {
 };
 // Update a User identified by the id in the request
 exports.update = async (req, res) => {
-  const { first_name, last_name, phone } = req.body;
+  const { user_name, phone } = req.body;
   try {
-    let IsUser = await User.findByIdAndUpdate(
-      req.params.id,
-      { first_name, last_name, phone },
-      { new: true }
-    );
+    let IsUser = await User.findByIdAndUpdate(req.params.id, { user_name, phone }, { new: true });
     if (IsUser) {
       const data = { data: user, message: "user Updated successfully!" };
       return res.json(successRepond(data));
