@@ -5,16 +5,9 @@ const validateRequest = require("./validate_required.util");
 function registerValidation(req, res, next) {
   const schema = Joi.object({
     email: Joi.string().email().required(),
-    password: Joi.string().pattern(new RegExp(Regex.PASSWORD_REGEX)).required(),
-    phone: Joi.number()
-      .integer()
-      .min(1000000000)
-      .message("Invalid mobile number")
-      .max(9999999999)
-      .message("Invalid mobile number"),
-    name: Joi.string().required(),
+    password: Joi.string().required(),
 
-    role: Joi.string().valid(config.ROLE.ADMIN, config.ROLE.CUSTOMER),
+    user_name: Joi.string().required(),
   });
   validateRequest.validateRequired(req, res, next, schema);
 }
@@ -22,7 +15,7 @@ function registerValidation(req, res, next) {
 function loginValidation(req, res, next) {
   const schema = Joi.object({
     email: Joi.string().email().required(),
-    password: Joi.string().pattern(new RegExp(Regex.PASSWORD_REGEX)).required(),
+    password: Joi.string().required(),
   });
   validateRequest.validateRequired(req, res, next, schema);
 }
