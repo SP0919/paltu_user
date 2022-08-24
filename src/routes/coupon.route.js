@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const couponController = require("../controllers/coupon.controller");
 const { upload, folder } = require("../services/imageUpload.service");
+const validation = require("../utils/validation.util");
+
 // let upload = multer();
 // Retrieve all users
 router.get("/", couponController.findAll);

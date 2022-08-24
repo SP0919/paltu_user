@@ -1,12 +1,40 @@
 const mongoose = require("mongoose");
 
-const CategorySchema = mongoose.Schema({
+const StateSchema = mongoose.Schema({
+  id: {
+    type: Number,
+    //required: true,
+  },
   name: {
     type: String,
-    required: true,
+    //required: true,
   },
 
-  image: {
+  country_id: {
+    type: Number,
+    // required: true,
+  },
+  country_code: {
+    type: String,
+    // required: true,
+  },
+  country_name: {
+    type: String,
+    // required: true,
+  },
+  state_code: {
+    type: String,
+    // required: true,
+  },
+  type: {
+    type: String,
+    // required: true,
+  },
+  latitude: {
+    type: String,
+    // required: true,
+  },
+  longitude: {
     type: String,
     // required: true,
   },
@@ -25,4 +53,4 @@ const CategorySchema = mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Category", CategorySchema);
+module.exports = mongoose.model("State", StateSchema);

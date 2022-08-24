@@ -7,10 +7,12 @@ const ReviewSchema = mongoose.Schema({
     ref: "User",
   },
   review_to: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-  }, 
-
+    type: String,
+  },
+  comment: {
+    type: String,
+    required: true,
+  },
   created_at: {
     type: Date,
     default: Date.now(),
