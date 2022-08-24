@@ -283,9 +283,7 @@ exports.updatePassword = async (req, res) => {
     let isUser = await User.findOne({
       _id: IsTokenValid?.user_id,
     });
-    console.log(IsTokenValid);
-    return;
-    findById;
+
     if (isUser) {
       let user = await User.findByIdAndUpdate(isUser?._id, { password }, { new: true });
       if (user) {
