@@ -69,7 +69,7 @@ exports.signIn = async function (req, res) {
         { email: isUser.email, fullName: isUser, _id: isUser._id },
         process.env.TOKEN_SECRET
       );
-      const datas = { data: [token, isUser], message: "Users Login  Successfully." };
+      const datas = { data: { token: token, user: isUser }, message: "Users Login  Successfully." };
       return res.json(successRepond(datas));
     }
   } catch (err) {
