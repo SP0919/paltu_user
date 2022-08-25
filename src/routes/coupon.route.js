@@ -9,7 +9,7 @@ const validation = require("../utils/validation.util");
 router.get("/", couponController.findAll);
 // Create a new user
 router.post("/create", upload.single("coupon_image"), couponController.create);
-// Retrieve a single user with id
+// Retrieve a single user with id juu
 router.get("/:id", couponController.findOne);
 // Update a user with id
 router.put("/:id", upload.single("coupon_image"), couponController.update);

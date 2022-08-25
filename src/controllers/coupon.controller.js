@@ -24,13 +24,7 @@ exports.findAll = async (req, res) => {
 // Create and Save a new Coupon
 exports.create = async (req, res) => {
   try {
-    if (!req.body) {
-      const datas = {
-        status: "400",
-        message: "Please fill all required field",
-      };
-    }
-    let coupon = new Coupon({
+   let coupon = new Coupon({
       name: req.body.name,
       image: "/public/images/coupon/" + req.file.originalname,
     });
@@ -45,45 +39,28 @@ exports.create = async (req, res) => {
     return res.send(errorRespond(data));
   }
 };
-// exports.create = (req, res) => {
-//   // Validate request
-//   if (!req.body) {
-//     return res.status(400).send({ message: "Please fill all required field" });
-//   }
 
-//   // Create a new Coupon
-//   const coupon = new Coupon({
-//     name: req.body.name,
-//     image: "/public/images/coupon/" + req.file.originalname,
-//   });
-//   // Save coupon in the database
-//   coupon
-//     .save()
-//     .then((data) => {
-//       res.send(data);
-//     })
-//     .catch((err) => {
-//       res
-//         .status(500)
-//         .send({ message: err.message || "Something went wrong while creating new coupon." });
-//     });
-// };
-// // Find a single Coupon with a id
-// exports.findOne = (req, res) => {
-//   Coupon.findById(req.params.id)
-//     .then((coupon) => {
-//       if (!coupon) {
-//         return res.status(404).send({ message: "Coupon not found with id " + req.params.id });
-//       }
-//       return res.send(coupon);
-//     })
-//     .catch((err) => {
-//       if (err.kind === "ObjectId") {
-//         return res.status(404).send({ message: "Coupon not found with id " + req.params.id });
-//       }
-//       return res.status(500).send({ message: "Error getting coupon with id " + req.params.id });
-//     });
-// };
+// Find a single Coupon with a id
+exports.findOne = async(req, res) => {
+  try{
+   let coupon = await Coupon.findById(req.params.id)
+    if (coupon) {
+      const data = { data: coupon, message: "save coupon successfully" };
+      return res.json(successRepond(data));
+    }
+     
+  } 
+  catch (err) {
+    const data = {
+      status: "500",
+      message: err.message || "Something went wrong",
+    }
+    return res.send(errorRespond(data));
+  }
+
+
+}
+
 // Update a Coupon identified by the id in the request
 exports.update = (req, res) => {
   // console.log(req.body);
