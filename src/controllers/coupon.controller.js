@@ -40,7 +40,7 @@ exports.create = async (req, res) => {
   }
 };
 
-// Find a single Coupon with a id
+// Find a single Coupon with a id fg
 exports.findOne = async(req, res) => {
   try{
    let coupon = await Coupon.findById(req.params.id)
