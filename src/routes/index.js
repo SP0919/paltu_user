@@ -52,7 +52,7 @@ const defaultRoutes = [
 defaultRoutes.forEach((route) => {
   router.use(route.path, route.route);
 });
-
+db();
 module.exports = router;
 router.all("*", (req, res) => {
   res.json({ message: "Invalid Page Link." });
