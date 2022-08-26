@@ -14,7 +14,7 @@ const isAuthenticated = async (req, res, next) => {
       return res.send(errorRespond(data));
     }
     const verify = await jwt.verify(token, process.env.TOKEN_SECRET);
-    console.log(verify);
+    // console.log(verify);
     req.user = await userModel.findById(verify._id);
     next();
   } catch (error) {
