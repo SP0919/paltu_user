@@ -24,5 +24,5 @@ const CouponSchema = mongoose.Schema({
     type: Date,
   },
 });
-
 module.exports = mongoose.model("Coupon", CouponSchema);
+
