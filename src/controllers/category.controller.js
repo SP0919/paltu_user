@@ -20,14 +20,14 @@ exports.findAll = async (req, res) => {
 // Create and Save a new Category
 exports.create = async (req, res) => {
   try {
-    // Validate request
-    if (!req.body) {
-      const data = {
-        status: "400",
-        message: "Please fill all required field",
-      };
-      return errorRespond(data, req, res);
-    }
+    // // Validate request
+    // if (!req.body) {
+    //   const data = {
+    //     status: "400",
+    //     message: "Please fill all required field",
+    //   };
+    //   return errorRespond(data, req, res);
+    // }
     const category = new Category({
       name: req.body.name,
       image: "/public/images/category/" + req.file.originalname,
@@ -44,57 +44,30 @@ exports.create = async (req, res) => {
     return errorRespond(data, req, res);
   }
 };
-// Find a single Category with a id
-exports.findOne = (req, res) => {
-  Category.findById(req.params.id)
-    .then((category) => {
-      if (!category) {
-        const data = {
-          status: "404",
-          message: "Category not found with id " + req.params.id,
-        };
-        return errorRespond(data, req, res);
+exports.findOne = async (req, res) => {
+  try {
+   
+    let category = await Category.findById(req.params.id);
+    if (!category) {
+      const data = { data: "", message: "category not found with id " };
+      return res.json(errorRespond(data));
       }
-      const data = { data: category, message: "category  successfully!" };
-      return successRepond(data, req, res);
-    })
-    .catch((err) => {
-      if (err.kind === "ObjectId") {
-        const data = {
-          status: "404",
-          message: "Category not found with id " + req.params.id,
-        };
-        return errorRespond(data, req, res);
-      }
-
-      const data = {
-        status: "500",
-        message: "Error getting category with id " + req.params.id,
-      };
-      return errorRespond(data, req, res);
-    });
+      const data = { data: category, message: "category  found with id  successfully" };
+      return res.json(successRepond(data));
+    }
+   catch (err) {
+    const data = {
+      status: "500",
+      message: err.message || "Something went wrong",
+    };
+    return res.send(errorRespond(data));
+  }
 };
 // Update a Category identified by the id in the request
-exports.update = (req, res) => {
-  // console.log(req.body);
-  // Validate Request
-  if (!req.body) {
-    const data = {
-      status: "400",
-      message: "Please fill all required field",
-    };
-    return errorRespond(data, req, res);
-  }
-  const checkCategory = Category.findById(req.params.id)
-    .then((category) => {
-      if (!category) {
-        const data = {
-          status: "404",
-          message: "Category not found with id " + req.params.id,
-        };
-        return errorRespond(data, req, res);
-      }
-      var image = "";
+exports.update = async (req, res) => {
+  
+  try {
+    var image = "";
       if (req.file) {
         image = "/public/images/category/" + req.file.originalname;
       } else {
@@ -102,7 +75,7 @@ exports.update = (req, res) => {
       }
       // console.log(req.body);
       // Find category and update it with the request body
-      Category.findByIdAndUpdate(
+       let category = await Category.findByIdAndUpdate(
         req.params.id,
         {
           name: req.body.name,
@@ -110,73 +83,42 @@ exports.update = (req, res) => {
         },
         { new: true }
       )
-        .then((category) => {
-          if (!category) {
-            const data = {
-              status: "404",
-              message: "Category not found with id " + req.params.id,
-            };
-            return errorRespond(data, req, res);
-          }
-          const data = { data: category, message: "category  successfully!" };
-          return successRepond(data, req, res);
-        })
-        .catch((err) => {
-          if (err.kind === "ObjectId") {
-            const data = {
-              status: "404",
-              message: "Category not found with id " + req.params.id,
-            };
-            return errorRespond(data, req, res);
-          }
-          const data = {
-            status: "500",
-            message: "Error updating category with id " + req.params.id,
-          };
-          return errorRespond(data, req, res);
-        });
-    })
-    .catch((err) => {
-      if (err.kind === "ObjectId") {
-        const data = {
-          status: "404",
-          message: "Category not found with id " + req.params.id,
-        };
-        return errorRespond(data, req, res);
+if (!category) {
+  const data = { data: "", message: "category not found with id " };
+      return res.json(errorRespond(data));
       }
-      const data = {
-        status: "500",
-        message: "Error getting category with id " + req.params.id,
-      };
-      return errorRespond(data, req, res);
-    });
+      const data = { data: category, message: "category Updated successfully!" };
+      return res.json(successRepond(data));
+    }
+      catch (err) {
+    const data = {
+      status: "500",
+      message: err.message || "Something went wrong",
+    };
+    return res.json(errorRespond(data));
+  }
 };
+        
+
+
 // Delete a Category with the specified id in the request
-exports.delete = (req, res) => {
-  Category.findByIdAndRemove(req.params.id)
-    .then((category) => {
-      if (!category) {
-        const data = {
-          status: "404",
-          message: "category not found with id " + req.params.id,
-        };
-        return errorRespond(data, req, res);
+
+exports.delete = async (req, res) => {
+  try {
+    let category = await Category.findByIdAndRemove(req.params.id);
+   
+    if (!category) {
+      const data = { data: "", message: "category not found with id " };
+      return res.json(errorRespond(data));
       }
-      const data = { data: "", message: "category deleted successfully!" };
-      return successRepond(data, req, res);
-    })
-    .catch((err) => {
-      if (err.kind === "ObjectId" || err.name === "NotFound") {
-        const data = {
-          status: "404",
-          message: "category not found with id " + req.params.id,
-        };
-        return errorRespond(data, req, res);
-      }
-      const data = {
-        status: "500",
-        message: "Could not delete category with id " + req.params.id,
-      };
-      return errorRespond(data, req, res);
-    });
+      const data = { data: "", message: "category Deleted successfully!" };
+      return res.json(successRepond(data));
+    }
+   catch (err) {
+    const data = {
+      status: "500",
+      message: err.message || "Something went wrong",
+    };
+    return res.json(errorRespond(data));
+  }
 };
