@@ -22,10 +22,6 @@ exports.findAll = async (req, res) => {
 };
 
 // Create and Save a new Coupon
-
-
-
-
 exports.create = async (req, res) => {
   try {
     

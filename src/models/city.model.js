@@ -34,17 +34,19 @@ const CitySchema = mongoose.Schema({
     // required: true,
   },
 
-  location: {
-    type: {
-      type: String,
-      default: "Points",
-    },
-    cordinates: {
-      latitude: Number,
-      longitude: Number,
-    },
+  type: {
+    type: String,
+    default: "Points",
   },
 
+  latitude: {
+    type: Number,
+    // required: true,
+  },
+  longitude: {
+    type: Number,
+    // required: true,
+  },
   wikiDataId: {
     type: String,
     // required: true,

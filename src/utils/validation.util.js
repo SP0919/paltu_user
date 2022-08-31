@@ -58,6 +58,8 @@ async function reviewValidation(req, res, next) {
 async function couponValidation(req, res, next) {
   const schema = await Joi.object({
     name: Joi.string().required(),
+    image: Joi.string(),
+
     
   });
   await validateRequest.validateRequired(req, res, next, schema);

@@ -20,30 +20,49 @@ exports.findAll = async (req, res) => {
 // Create and Save a new Category
 exports.create = async (req, res) => {
   try {
-    // // Validate request
-    // if (!req.body) {
-    //   const data = {
-    //     status: "400",
-    //     message: "Please fill all required field",
-    //   };
-    //   return errorRespond(data, req, res);
-    // }
-    const category = new Category({
+    
+    let category = new Category({
       name: req.body.name,
       image: "/public/images/category/" + req.file.originalname,
+    
     });
-    let cat = category.save();
-    // Create a new Category
-    const dataS = { data: category, message: "category  successfully!" };
-    return successRepond(dataS, req, res);
+    let categorys = await category.save();
+    const data = { data: category, message: "save category successfully" };
+    return res.json(successRepond(data));
   } catch (err) {
     const data = {
       status: "500",
-      message: err.message || "Something went wrong while getting list of category.",
+      message: err.message || "Something went wrong",
     };
-    return errorRespond(data, req, res);
+    return res.send(errorRespond(data));
   }
 };
+// exports.create = async (req, res) => {
+//   try {
+//     // // Validate request
+//     // if (!req.body) {
+//     //   const data = {
+//     //     status: "400",
+//     //     message: "Please fill all required field",
+//     //   };
+//     //   return errorRespond(data, req, res);
+//     // }
+//     const category = new Category({
+//       name: req.body.name,
+//       image: "/public/images/category/" + req.file.originalname,
+//     });
+//     let cat = category.save();
+//     // Create a new Category
+//     const data = { data: category, message: "category  successfully!" };
+//     return successRepond(dataS, req, res);
+//   } catch (err) {
+//     const data = {
+//       status: "500",
+//       message: err.message || "Something went wrong while getting list of category.",
+//     };
+//     return errorRespond(data, req, res);
+//   }
+// };
 exports.findOne = async (req, res) => {
   try {
    
