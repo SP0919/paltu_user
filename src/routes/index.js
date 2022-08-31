@@ -12,6 +12,7 @@ var serviceTypes = require("./serviceTypes.route");
 var miscellaneous = require("./miscellaneous.route");
 var review = require("./review.route");
 var homepage = require("./homepage.route");
+var appointment = require("./appointment.route");
 
 const defaultRoutes = [
   {
@@ -46,6 +47,10 @@ const defaultRoutes = [
   {
     path: "/home",
     route: homepage,
+  },
+  {
+    path: "/appointment",
+    route: appointment,
   },
 ];
 
