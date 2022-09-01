@@ -6,7 +6,7 @@ const multer = require("multer");
 let upload = multer();
 const isAuthenticated = require("../middlewares/authenticate.middleware");
 // Create a new user
-router.get("/service-providers/:lat/:long", isAuthenticated, homepageController.findAll);
+router.get("/service-providers/:lat/:long",  isAuthenticated, homepageController.findAll);
 
 // // Create a new user
 // router.post("/state", upload.none(), homepageController.state);

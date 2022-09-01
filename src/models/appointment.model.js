@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
-
+const Schema = mongoose.Schema;
 const AppointmentSchema = mongoose.Schema({
   user_id: {
     type: Schema.Types.ObjectId,
     ref: "User",
   },
-  serviceProvider: {
-    type: Schema.Types.Objected,
-    ref: "User",
-  },
+  // serviceProvider: {
+  //   type: Schema.Types.Objected,
+  //   ref: "User",
+  // },
   name: {
     type: String,
     required: true,
@@ -43,4 +43,4 @@ const AppointmentSchema = mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model(" Appointment", AppointmentSchema);
+module.exports = mongoose.model("Appointment", AppointmentSchema);

@@ -1,8 +1,5 @@
 const Review = require("../models/review.model.js");
-const {
-  errorRespond,
-  successRepond,
-} = require("../utils/responseHandler.util");
+const { errorRespond, successRepond } = require("../utils/responseHandler.util");
 exports.findAll = async (req, res) => {
   try {
     let review = await Review.find();
@@ -13,8 +10,7 @@ exports.findAll = async (req, res) => {
   } catch (err) {
     const data = {
       status: "500",
-      message:
-        err.message || "Something went wrong while getting list of review.",
+      message: err.message || "Something went wrong while getting list of review.",
     };
     return res.send(errorRespond(data));
   }
@@ -27,7 +23,6 @@ exports.create = async (req, res) => {
       comment: req.body.comment,
       review_to: req.body.review_to,
       review_by: req.user._id,
-      
     });
     let reviewData = await review.save();
     const data = { data: reviewData, message: "save review successfully" };
