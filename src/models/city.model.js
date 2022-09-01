@@ -1,4 +1,3 @@
-const { string } = require("joi");
 const mongoose = require("mongoose");
 
 const CitySchema = mongoose.Schema({
@@ -34,18 +33,13 @@ const CitySchema = mongoose.Schema({
     type: String,
     // required: true,
   },
-
-  
-  location:{
+  location: {
     type: {
       type: String,
-      default: "Points",
-    }
-    ,cordinates:{
-      latitude:Number,longitude:Number
-    }
+      default: "Point",
+    },
+    cordinates: [{ latitude: Number, Longitude: Number }],
   },
-  
   wikiDataId: {
     type: String,
     // required: true,

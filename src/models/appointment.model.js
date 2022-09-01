@@ -5,7 +5,15 @@ const AppointmentSchema = mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
+<<<<<<< HEAD
   service_to: {
+=======
+  // serviceProvider: {
+  //   type: Schema.Types.Objected,
+  //   ref: "User",
+  // },
+  name: {
+>>>>>>> 6ff4c0e4d58019837c8e98797a7420f265c9bfe8
     type: String,
    
   },
@@ -31,4 +39,4 @@ const AppointmentSchema = mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model(" Appointment", AppointmentSchema);
+module.exports = mongoose.model("Appointment", AppointmentSchema);
